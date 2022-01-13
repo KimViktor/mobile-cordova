@@ -720,7 +720,10 @@
     NSDictionary *result = [NSDictionary dictionaryWithObject: scanReference forKey: @"scanReference"];
     CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus: CDVCommandStatus_ERROR messageAsDictionary: result];
     [self.commandDelegate sendPluginResult: pluginResult callbackId: self.callbackId];
-    [self.viewController dismissViewControllerAnimated: YES completion: nil];
+    [self.viewController dismissViewControllerAnimated: YES completion: ^{
+        [self.documentVerificationViewController setDelegate:nil];
+        self.documentVerificationViewController = nil;
+    }];
 }
     
 - (void) documentVerificationViewController:(DocumentVerificationViewController *)documentVerificationViewController didFinishWithError:(DocumentVerificationError *)error {
@@ -784,7 +787,12 @@
     
     CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus: CDVCommandStatus_ERROR messageAsDictionary: result];
     [self.commandDelegate sendPluginResult: pluginResult callbackId: self.callbackId];
-    [self.viewController dismissViewControllerAnimated: YES completion: nil];
+    [self.viewController dismissViewControllerAnimated: YES completion: ^{
+        if (self.documentVerificationViewController) {
+            [self.documentVerificationViewController setDelegate:nil];
+            self.documentVerificationViewController = nil;
+        }
+    }];
 }
     
 - (BOOL) getBoolValue:(NSObject *)value {
